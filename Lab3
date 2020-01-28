@@ -288,9 +288,39 @@ void loop()
         ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1600, 2100);
 
        /***************************************************************************************
-         Add line tracking code here. 
-         Adjust motor speed accrding to information from line tracking sensors and 
-         possibly encoder counts.
+        Basic Logic
+        
+        if middle sensor sees line (return 0)--> continue
+        if left sensor sees line --> go left and turn straight
+        if right sensor sees line --> go right and turn straight
+        
+        if(ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  {
+   do
+   { 
+   turnLeft();
+   }
+   while(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)
+  }
+  else
+  {}
+  if(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  {
+   
+  }
+  else
+  { 
+    
+  }
+  if(ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  {
+    
+  }
+  else
+  { 
+   
+  }
+    
        /*************************************************************************************/
 
         if(bt_Motors_Enabled)
