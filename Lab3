@@ -126,6 +126,12 @@ unsigned int ui_Right_Line_Tracker_Dark;
 unsigned int ui_Right_Line_Tracker_Light;
 unsigned int ui_Line_Tracker_Tolerance;
 
+//*************************************************************************************
+bool leftOn = false;
+bool rightOn = false;
+bool middleOn = false;
+//*************************************************************************************
+
 unsigned int  ui_Robot_State_Index = 0;
 //0123456789ABCDEF
 unsigned int  ui_Mode_Indicator[6] = {
@@ -150,7 +156,7 @@ boolean bt_Do_Once = false;
 boolean bt_Cal_Initialized = false;
 
 void setup() {
-  Wire.begin();	      // Wire library required for I2CEncoder library
+  Wire.begin();        // Wire library required for I2CEncoder library
   Serial.begin(9600);
 
   CharliePlexM::setBtn(ci_Charlieplex_LED1,ci_Charlieplex_LED2,
@@ -287,41 +293,31 @@ void loop()
         ui_Left_Motor_Speed = constrain(ui_Motors_Speed + ui_Left_Motor_Offset, 1600, 2100);
         ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1600, 2100);
 
-       /***************************************************************************************
-        Basic Logic
-        
-        if middle sensor sees line (return 0)--> continue
-        if left sensor sees line --> go left and turn straight
-        if right sensor sees line --> go right and turn straight
-        
-        if(ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
-  {
-   do
-   { 
-   turnLeft();
-   }
-   while(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)
-  }
-  else
-  {}
-  if(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
-  {
-   
-  }
-  else
-  { 
-    
-  }
-  if(ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
-  {
-    
-  }
-  else
-  { 
-   
-  }
-    
-       /*************************************************************************************/
+       //***************************************************************************************
+         if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn)
+         {
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1610;
+         }
+
+         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn)
+         {
+          ui_Left_Motor_Speed = 1625;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+         if((middleOn&&leftOn&&rightOn)||(!rightOn&&!leftOn&&!middleOn))
+         {
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500;
+         }
+       //*************************************************************************************/
 
         if(bt_Motors_Enabled)
         {
@@ -536,26 +532,32 @@ void readLineTrackers()
   if(ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
   {
     CharliePlexM::Write(ci_Left_Line_Tracker_LED, HIGH);
+    leftOn=true;
   }
   else
   { 
     CharliePlexM::Write(ci_Left_Line_Tracker_LED, LOW);
+    leftOn=false;
   }
   if(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
   {
     CharliePlexM::Write(ci_Middle_Line_Tracker_LED, HIGH);
+    middleOn=true;
   }
   else
   { 
     CharliePlexM::Write(ci_Middle_Line_Tracker_LED, LOW);
+    middleOn=false;
   }
   if(ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
   {
     CharliePlexM::Write(ci_Right_Line_Tracker_LED, HIGH);
+    rightOn=true;
   }
   else
   { 
     CharliePlexM::Write(ci_Right_Line_Tracker_LED, LOW);
+    rightOn=false;
   }
 
 #ifdef DEBUG_LINE_TRACKERS
