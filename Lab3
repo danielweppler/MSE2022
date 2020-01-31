@@ -130,6 +130,9 @@ unsigned int ui_Line_Tracker_Tolerance;
 bool leftOn = false;
 bool rightOn = false;
 bool middleOn = false;
+int turnCounter = -1;
+bool stateNew=LOW;
+bool stateOld= LOW;
 //*************************************************************************************
 
 unsigned int  ui_Robot_State_Index = 0;
@@ -287,6 +290,7 @@ void loop()
         Serial.print(l_Left_Motor_Position);
         Serial.print(", R: ");
         Serial.println(l_Right_Motor_Position);
+        
 #endif
 
        // set motor speeds
@@ -294,28 +298,129 @@ void loop()
         ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1600, 2100);
 
        //***************************************************************************************
-         if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+     
+        
+        if(rightOn&&leftOn&&middleOn)
+        {
+        stateNew= HIGH;  
+        }
+
+stateOld = stateNew;
+
+        while(1)
+        {
+          if(rightOn&&leftOn&&middleOn)
+        {
+        stateNew= HIGH;  
+        }
+
+        if(stateOld != stateNew)
+{
+  turnCounter++;
+  }
+}
+         
+         switch(turnCounter)
+         {
+          case 0:
+        {
+         
+         if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
          {
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1600;
          }
-
-         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn)
-         {
+       
+         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//left and middle
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1610;
          }
 
-         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn)
+         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//right and middle
+          ui_Left_Motor_Speed = 1625;
+          ui_Right_Motor_Speed = 1600;
+         }
+          
+          
+          break;
+        }
+
+        case 1:
+
+        {
+          ui_Left_Motor_Speed = 1520;
+          ui_Right_Motor_Speed = 1520;
+          break;
+        }
+
+        case 2:
+        {
+         ui_Left_Motor_Speed = 1450;
+          ui_Right_Motor_Speed = 1550; 
+
+          break;
+        }
+
+
+        case 3:
+        {
+           if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
          {
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1600;
+         }
+       
+         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//left and middle
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1610;
+         }
+
+         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//right and middle
           ui_Left_Motor_Speed = 1625;
           ui_Right_Motor_Speed = 1600;
          }
 
-         if((middleOn&&leftOn&&rightOn)||(!rightOn&&!leftOn&&!middleOn))
-         {
-          ui_Left_Motor_Speed = 1500;
-          ui_Right_Motor_Speed = 1500;
+          break;
+        }
+
+        case 4:
+        {
+          ui_Left_Motor_Speed = 1550;
+          ui_Right_Motor_Speed = 1450;
+
+          break;
+        }
+
+        case 5:
+        {
+         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//left and middle
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1610;
+         }
+
+         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//right and middle
+          ui_Left_Motor_Speed = 1625;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+         if(((ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn) && ((ui_Middle_Line_Tracker_Data > (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !middleOn) && ((ui_Right_Line_Tracker_Data > (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !rightOn))
+         {//left only
+           ui_Left_Motor_Speed = 1510;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+        if(((ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn) && (!(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !middleOn) && (!(ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !leftOn))
+         {//right only
+           ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1510;
+         }
+        }
          }
        //*************************************************************************************/
 
