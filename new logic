@@ -1,1 +1,24 @@
 
+ if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
+         {
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn||(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//left and middle
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1610;
+         }
+
+         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn||(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+         {//right and middle
+          ui_Left_Motor_Speed = 1625;
+          ui_Right_Motor_Speed = 1600;
+         }
+
+         if((middleOn&&leftOn&&rightOn)||(!rightOn&&!leftOn&&!middleOn))
+         {
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500;
+         }
