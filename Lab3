@@ -130,7 +130,7 @@ unsigned int ui_Line_Tracker_Tolerance;
 bool leftOn = false;
 bool rightOn = false;
 bool middleOn = false;
-int turnCounter = -1;
+int turnCounter = 0;
 bool stateNew=LOW;
 bool stateOld= LOW;
 //*************************************************************************************
@@ -307,8 +307,8 @@ void loop()
         
          if(!rightOn&&!leftOn&&!middleOn)
         {
-        stateNew= LOW;  
-        }
+       stateNew= LOW;  
+       }
 
 if(stateNew != stateOld)
 {
@@ -328,15 +328,19 @@ stateOld = stateNew;
         {
          
         goStraight();
-          
-          
+
+        if(rightOn&&leftOn&&middleOn)
+        {
+        stateNew= LOW;  
+        }
+           
           break;
         }
 
         case 1:
 
         {
-          ui_Left_Motor_Speed = 1591;
+          ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1590;
           break;
         }
@@ -349,6 +353,7 @@ stateOld = stateNew;
        if(!rightOn&&leftOn&&!middleOn)
         {
         turnCounter++; 
+        Serial.print(turnCounter);
         }
          
           break;
@@ -383,13 +388,18 @@ stateOld = stateNew;
         case 3:
         {
           goStraight(); 
+
+          if(rightOn&&leftOn&&middleOn)
+        {
+        stateNew= LOW;  
+        }
           break;
         }
 
         case 4:
 
         {
-          ui_Left_Motor_Speed = 1591;
+          ui_Left_Motor_Speed = 1620;
           ui_Right_Motor_Speed = 1590;
           break;
         }
@@ -399,21 +409,34 @@ stateOld = stateNew;
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1400;
 
-           if(rightOn||leftOn||middleOn)
+            if(rightOn&&!leftOn&&!middleOn)
         {
-        followCurve();
+        turnCounter++; 
+        Serial.print(turnCounter);
         }
 
 
           break;
         }
 
-      /*  case 4:
+        case 6:
         {
          followCurve();
+          break;
+
+
+         
         }
+
+        case 7:
+        {
+          
+        ui_Left_Motor_Speed = 1620
+        ;
+          ui_Right_Motor_Speed = 1590;
+          break;
          }
-         */
+         
 
          default:
          {
@@ -703,20 +726,20 @@ void goStraight()
 {
          if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
          {
-          ui_Left_Motor_Speed = 1590;
-          ui_Right_Motor_Speed = 1590;
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1600;
          }
        
          else if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
          {//left and middle
-          ui_Left_Motor_Speed = 1580;
-          ui_Right_Motor_Speed = 1590;
+          ui_Left_Motor_Speed = 1610;
+          ui_Right_Motor_Speed = 1600;
          }
 
          else if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
          {//right and middle
-          ui_Left_Motor_Speed = 1605;
-          ui_Right_Motor_Speed = 1580;
+          ui_Left_Motor_Speed = 1625;
+          ui_Right_Motor_Speed = 1600;
         }
         else
         {
