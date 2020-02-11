@@ -133,6 +133,7 @@ bool middleOn = false;
 int turnCounter = 0;
 bool stateNew=LOW;
 bool stateOld= LOW;
+unsigned long spinTime;
 //*************************************************************************************
 
 unsigned int  ui_Robot_State_Index = 0;
@@ -299,7 +300,6 @@ void loop()
 
        //***************************************************************************************
      
-        
         if(rightOn&&leftOn&&middleOn)
         {
         stateNew= HIGH;  
@@ -310,141 +310,52 @@ void loop()
        stateNew= LOW;  
        }
 
-if(stateNew != stateOld)
-{
- if(stateNew == HIGH)
- {
-  turnCounter++;
-  Serial.println(turnCounter);
- }
-}
-
-stateOld = stateNew;
-    
-         
-         switch(turnCounter)
-         {
-          case 0:
+        if(stateNew != stateOld)
         {
-         
-        goStraight();
-
-        if(rightOn&&leftOn&&middleOn)
-        {
-        stateNew= LOW;  
+          if(stateNew == HIGH)
+          {
+          turnCounter++;
+           Serial.println(turnCounter);
+           }
         }
-           
+
+        stateOld = stateNew;
+
+        switch(turnCounter)
+      {
+        case 0:
+        {
+          followLine();
+
+          stateNew=LOW;
           break;
         }
 
         case 1:
-
         {
-          ui_Left_Motor_Speed = 1600;
-          ui_Right_Motor_Speed = 1590;
+          followLine();
+
+          stateNew=LOW;
           break;
         }
 
         case 2:
         {
-         ui_Left_Motor_Speed = 1400;
-          ui_Right_Motor_Speed = 1600; 
+          followLine();
 
-       if(!rightOn&&leftOn&&!middleOn)
-        {
-        turnCounter++; 
-        Serial.print(turnCounter);
-        }
-         
+          stateNew=LOW;
           break;
-
-
         }
-
-
-  /*      case 3:
-        {
-           if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
-         {
-          ui_Left_Motor_Speed = 1600;
-          ui_Right_Motor_Speed = 1600;
-         }
-       
-         if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
-         {//left and middle
-          ui_Left_Motor_Speed = 1600;
-          ui_Right_Motor_Speed = 1610;
-         }
-
-         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
-         {//right and middle
-          ui_Left_Motor_Speed = 1625;
-          ui_Right_Motor_Speed = 1600;
-         }
-
-          break;
-        }*/
 
         case 3:
         {
-          goStraight(); 
-
-          if(rightOn&&leftOn&&middleOn)
-        {
-        stateNew= LOW;  
-        }
-          break;
-        }
-
-        case 4:
-
-        {
-          ui_Left_Motor_Speed = 1620;
-          ui_Right_Motor_Speed = 1590;
-          break;
-        }
-        
-        case 5:
-        {
-          ui_Left_Motor_Speed = 1600;
-          ui_Right_Motor_Speed = 1400;
-
-            if(rightOn&&!leftOn&&!middleOn)
-        {
-        turnCounter++; 
-        Serial.print(turnCounter);
-        }
-
-
-          break;
-        }
-
-        case 6:
-        {
-         followCurve();
-          break;
-
-
-         
-        }
-
-        case 7:
-        {
           
-        ui_Left_Motor_Speed = 1620
-        ;
-          ui_Right_Motor_Speed = 1590;
+        stopBot();
           break;
-         }
-         
+        }
 
-         default:
-         {
-          ui_Left_Motor_Speed = 1500;
-          ui_Right_Motor_Speed = 1500;
-         }
-         }
-       //*************************************************************************************/
+      }
+    //*************************************************************************************/
 
         if(bt_Motors_Enabled)
         {
@@ -722,56 +633,65 @@ void Ping()
 }  
 
 
-void goStraight()
+void followLine()
 {
-         if((ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)//only middle
+if(middleOn )//only middle
          {
+          Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1600;
          }
        
-         else if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+        else if(leftOn &&  middleOn && !rightOn)
          {//left and middle
-          ui_Left_Motor_Speed = 1610;
-          ui_Right_Motor_Speed = 1600;
-         }
-
-         else if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
-         {//right and middle
-          ui_Left_Motor_Speed = 1625;
-          ui_Right_Motor_Speed = 1600;
-        }
-        else
-        {
-          ui_Left_Motor_Speed = 1500;
-          ui_Right_Motor_Speed = 1500;
-        }
-}
-
-
-void followCurve()
-{
-if(ui_Left_Line_Tracker_Data < ((ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
-         {//left and middle
+          Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1610;
          }
 
-         if(ui_Right_Line_Tracker_Data < ((ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || middleOn)
+        else if(rightOn &&  middleOn && !leftOn)
          {//right and middle
-          ui_Left_Motor_Speed = 1625;
+          Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
+          ui_Left_Motor_Speed = 1610;
           ui_Right_Motor_Speed = 1600;
-         }
+        }
 
-         if(((ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || leftOn) && ((ui_Middle_Line_Tracker_Data > (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !middleOn) && ((ui_Right_Line_Tracker_Data > (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !rightOn))
-         {//left only
-           ui_Left_Motor_Speed = 1510;
-          ui_Right_Motor_Speed = 1600;
-         }
+        else if(rightOn &&  !middleOn && !leftOn)
+      {
+         Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
+          ui_Left_Motor_Speed = 1610;
+          ui_Right_Motor_Speed = 1500;
+      }
 
-        if(((ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || rightOn) && (!(ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !middleOn) && (!(ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) || !leftOn))
-         {//right only
-           ui_Left_Motor_Speed = 1600;
-          ui_Right_Motor_Speed = 1510;
-         }
+      else if(!rightOn &&  !middleOn && leftOn)
+      {
+         Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1610;
+      }
+      else
+      {
+       Serial.println(middleOn);
+          Serial.println(leftOn);
+          Serial.println(rightOn);
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500; 
+      }  
 }
+
+void stopBot()
+{
+ ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500; 
+}
+
