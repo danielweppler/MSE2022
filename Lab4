@@ -319,7 +319,7 @@ void loop()
           if(stateNew == HIGH)
           {
           turnCounter++;
-           Serial.println(turnCounter);
+    
            }
         }
 
@@ -330,7 +330,7 @@ void loop()
         case 0:
         {
           followLineB();
-Serial.println(turnCounter);
+
           stateNew=LOW;
           break;
         }
@@ -338,7 +338,7 @@ Serial.println(turnCounter);
         case 1:
         {
           followLineB();
-Serial.println(turnCounter);
+
           stateNew=LOW;
           break;
         }
@@ -346,20 +346,20 @@ Serial.println(turnCounter);
         case 2:
         {
           followLineA();
-Serial.println(turnCounter);
+//Serial.println(turnCounter);
           stateNew=LOW;
           break;
         }
 
         case 3:
         {
- Serial.println(turnCounter);         
+// Serial.println(turnCounter);         
         
         skrt();
 
         delay(300);
 
-        if((leftOn&&!rightOn&&!middleOn)||(!leftOn&&rightOn&&!middleOn)||(!leftOn&&!rightOn&&middleOn))
+        if((leftOn&&!rightOn&&!middleOn)||(!leftOn&&!rightOn&&middleOn)||(!leftOn&&rightOn&&!middleOn))
         {
           turnCounter++;
         }
@@ -371,7 +371,7 @@ Serial.println(turnCounter);
         case 4:
         {
           followLineA();
-          Serial.println(turnCounter);
+    //      Serial.println(turnCounter);
           stateNew=LOW;
           break;
         }
@@ -381,15 +381,17 @@ Serial.println(turnCounter);
           Ping();
           skrt();
 
-          if((ul_Echo_Time/58)<=6)
+          if((ul_Echo_Time/58)<=8)
           {
            stopBot();
+           delay(500);
            servo_GripMotor.write(ci_Grip_Motor_Open); 
            servo_ArmMotor.write(ci_Arm_Servo_Extended);
            delay(1000);
            servo_GripMotor.write(ci_Grip_Motor_Closed); 
            delay(1000);
           servo_ArmMotor.write(ci_Arm_Servo_Retracted);
+          delay(1000);
          
           
           turnCounter++;
@@ -397,7 +399,7 @@ Serial.println(turnCounter);
           }
           
           
-          Serial.println(turnCounter);
+    //      Serial.println(turnCounter);
           break;
         }
 
@@ -427,18 +429,21 @@ Serial.println(turnCounter);
          case 9:
         {
           followLineB();
+          stateNew=LOW;
           break;
         }
 
          case 10:
         {
           followLineB();
+          stateNew=LOW;
           break;
         }
 
          case 11:
         {
           followLineB();
+          stateNew=LOW;
           break;
         }
 
@@ -876,7 +881,7 @@ void stopBot()
 
 void skrt()
 {
-           ui_Left_Motor_Speed = 1600;
+           ui_Left_Motor_Speed = 1605;
            ui_Right_Motor_Speed = 1600; 
 }
 
@@ -900,15 +905,11 @@ void rotateBotRight()
 
 }
 
-void distanceDrive()
-{
-  while((ul_Echo_Time/58)> 10)
-  {
-    
-  }
-}
 
-void reverse() {
+
+void reverse() 
+
+{
 
   ui_Left_Motor_Speed = 1400;
   ui_Right_Motor_Speed = 1400; 
