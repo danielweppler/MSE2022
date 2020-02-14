@@ -89,7 +89,7 @@ const int ci_Right_Motor_Stop = 1500;
 const int ci_Grip_Motor_Open = 140;         // Experiment to determine appropriate value
 const int ci_Grip_Motor_Closed = 30;        //  "
 const int ci_Arm_Servo_Retracted = 55;      //  "
-const int ci_Arm_Servo_Extended = 120;      //  "
+const int ci_Arm_Servo_Extended = 150;      //  "
 const int ci_Display_Time = 500;
 const int ci_Line_Tracker_Calibration_Interval = 100;
 const int ci_Line_Tracker_Cal_Measures = 20;
@@ -355,7 +355,7 @@ void loop()
         {
 // Serial.println(turnCounter);         
         
-        skrt();
+        skrt1();
 
         delay(300);
 
@@ -363,7 +363,6 @@ void loop()
         {
           turnCounter++;
         }
-
         
           break;
         }
@@ -379,22 +378,24 @@ void loop()
         case 5:
         {
           Ping();
-          skrt();
+          skrt2();
 
-          if((ul_Echo_Time/58)<=8)
+          if((ul_Echo_Time)>=50&&(ul_Echo_Time)<=350)
           {
-           stopBot();
-           delay(500);
-           servo_GripMotor.write(ci_Grip_Motor_Open); 
-           servo_ArmMotor.write(ci_Arm_Servo_Extended);
+           ui_Left_Motor_Speed = 1500;
+           ui_Right_Motor_Speed = 1500;
+          
+           servo_GripMotor.write(ci_Grip_Motor_Open);
+           delay(1000); 
+           servo_ArmMotor.write(120);
            delay(1000);
            servo_GripMotor.write(ci_Grip_Motor_Closed); 
            delay(1000);
-          servo_ArmMotor.write(ci_Arm_Servo_Retracted);
-          delay(1000);
+           servo_ArmMotor.write(ci_Arm_Servo_Retracted);
+           delay(1000);
          
           
-          turnCounter++;
+            turnCounter++;
        
           }
           
@@ -405,15 +406,16 @@ void loop()
 
         case 6:
         {
-          reverse();   
+          reverse();
+             
           break;
         }
 
         case 7:
         {
-          rotateBotLeft();
+          rotateBotRight();
 
-          if(leftOn&&!rightOn&&!middleOn)
+          if(!leftOn&&rightOn&&!middleOn)
           {
             turnCounter++;
           }
@@ -450,6 +452,8 @@ void loop()
          case 12:
         {
           stopBot();
+          servo_GripMotor.write(ci_Grip_Motor_Open); 
+          
           break;
         }
         default:
@@ -869,7 +873,7 @@ if(middleOn )//only middle
        
          //encoder_LeftMotor.zero();
         // encoder_RightMotor.zero();
-          skrt(); 
+          skrt2(); 
       }  
 }
 
@@ -879,7 +883,13 @@ void stopBot()
           ui_Right_Motor_Speed = 1500; 
 }
 
-void skrt()
+void skrt1()
+{
+           ui_Left_Motor_Speed = 1605;
+           ui_Right_Motor_Speed = 1600; 
+}
+
+void skrt2()
 {
            ui_Left_Motor_Speed = 1605;
            ui_Right_Motor_Speed = 1600; 
@@ -912,6 +922,6 @@ void reverse()
 {
 
   ui_Left_Motor_Speed = 1400;
-  ui_Right_Motor_Speed = 1400; 
+  ui_Right_Motor_Speed = 1405; 
   
 }
